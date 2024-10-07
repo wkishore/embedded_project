@@ -39,17 +39,15 @@ unsigned int adc_temp,adc_temp1, adc_temp2;
 float in_vtg, in_vtg1, in_vtg2;
 char vtg[14],dval[14];
 char Msg3[] = {"Moisture:"};
- 
-//char Msg4[] = {"Moisture value:"};
+
 SystemInit();
 SystemCoreClockUpdate();
-//LPC_SC->PCONP |= (1<<15);//Power for GPIO block
-//LPC_SC->PCONP |= (1<<12);//peripheral devices for ADC turned on
+
 lcd_init();
 LPC_PINCON->PINSEL1 |= 1<<14;
 LPC_PINCON->PINSEL1 |= 1<<16;
-LPC_PINCON->PINSEL1 |= 1<<18;//P0.23 as AD0.0(23-16)*2
-LPC_SC->PCONP |= (1<<12); //enable the peripheral ADC
+LPC_PINCON->PINSEL1 |= 1<<18;
+LPC_SC->PCONP |= (1<<12);
 temp1 = 0x80;
 lcd_com();
 delay_lcd(800);
@@ -57,18 +55,16 @@ lcd_puts(&Msg3[0]);
 temp1 = 0xC0;
 lcd_com();
 delay_lcd(800);
-//lcd_puts(&Msg4[0]);
 while(1)
 {
-	LPC_ADC->ADCR = (1<<0)|(1<<21)|(1<<24);//0x01200001; //ADC0.0, start conversion and operational
-		//delay for conversion
+	LPC_ADC->ADCR = (1<<0)|(1<<21)|(1<<24);
 	while(((adc_temp = LPC_ADC->ADGDR) & 0x80000000) ==0);
-	//wait till 'done' bit is 1, indicates conversion complete
+	
 	adc_temp = LPC_ADC->ADGDR;
 	adc_temp >>= 4;
-	adc_temp &= 0x00000FFF; //12 bit ADC
-	in_vtg = (((float)adc_temp * (float)Ref_Vtg))/((float)Full_Scale); //calculating input analog
-	//voltage
+	adc_temp &= 0x00000FFF;
+	in_vtg = (((float)adc_temp * (float)Ref_Vtg))/((float)Full_Scale);
+	
 	for(i=0;i<200000;i++);
 	for(i=0;i<200000;i++);
 	for(i=0;i<200000;i++);
@@ -79,15 +75,13 @@ while(1)
 	for(i=0;i<200000;i++);
 	for(i=0;i<200000;i++);
 	LPC_ADC->ADCR = 0;
-	LPC_ADC->ADCR = (1<<1)|(1<<21)|(1<<24);//0x01200001; //ADC0.0, start conversion and operational
-		//delay for conversion
+	LPC_ADC->ADCR = (1<<1)|(1<<21)|(1<<24);
 	while(((adc_temp1 = LPC_ADC->ADGDR) & 0x80000000) ==0);
-	//wait till 'done' bit is 1, indicates conversion complete
+	
 	adc_temp1 = LPC_ADC->ADGDR;
 	adc_temp1 >>= 4;
 	adc_temp1 &= 0x00000FFF; //12 bit ADC
-	in_vtg1 = (((float)adc_temp1 * (float)Ref_Vtg))/((float)Full_Scale); //calculating input analog
-	//voltage
+	in_vtg1 = (((float)adc_temp1 * (float)Ref_Vtg))/((float)Full_Scale); 
 	for(i=0;i<200000;i++);
 	for(i=0;i<200000;i++);
 	for(i=0;i<200000;i++);
@@ -97,13 +91,12 @@ while(1)
 	for(i=0;i<200000;i++);
 	for(i=0;i<200000;i++);
 	LPC_ADC->ADCR = 0;
-	LPC_ADC->ADCR = (1<<2)|(1<<21)|(1<<24);//0x01200001; //ADC0.0, start conversion and operational
-		//delay for conversion
+	LPC_ADC->ADCR = (1<<2)|(1<<21)|(1<<24);
 	while(((adc_temp2 = LPC_ADC->ADGDR) & 0x80000000) ==0);
-	//wait till 'done' bit is 1, indicates conversion complete
+	
 	adc_temp2 = LPC_ADC->ADGDR;
 	adc_temp2 >>= 4;
-	adc_temp2 &= 0x00000FFF; //12 bit ADC
+	adc_temp2 &= 0x00000FFF; 
 	in_vtg2 = (((float)adc_temp2 * (float)Ref_Vtg)*100)/((float)Full_Scale);
 	for(i=0;i<200000;i++);
 	for(i=0;i<200000;i++);
@@ -146,7 +139,7 @@ while(1)
 		dutyCycle=0;
 
 	sprintf(vtg,"%d",count);
-	//convert the readings into string to display on LCD
+	
  
 	sprintf(dval,"%0.2f",dutyCycle);
 	for(i=0;i<2000;i++);
@@ -165,15 +158,12 @@ while(1)
 	for(i=0;i<200000;i++);
 	for(i=0;i<200000;i++);
 	for(i=0;i<200000;i++);
-	//for(i=0;i<7;i++)
-	//vtg[i] = dval[i] = 0x00;
-	//adc_temp = 0;
-	//in_vtg = 0;
+	
 	}
 }
  
 void loop1(int data1, int data2) {
-    // Assuming data1 and data2 are variables representing sensor readings
+    
     if (!data1 && j == 1 && state1) {
         outsideIr = true;
         for(i=0;i<2000;i++);
@@ -216,9 +206,9 @@ void loop1(int data1, int data2) {
  
 void lcd_init()
 {
-    /* Ports initialized as GPIO */
+    
 		LPC_PINCON->PINSEL0 &= 0x00000000; //P0.0 to P0.15
-    /* Setting the directions as output */
+    
 	LPC_GPIO0->FIODIR |= 0x00000FF0;//DT_CTRL;
     LPC_GPIO0->FIODIR |= 0x00000100; //RS_CTRL; 
 	LPC_GPIO0->FIODIR |= 00000200; //EN_CTRL;????
